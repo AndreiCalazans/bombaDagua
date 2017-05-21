@@ -1,0 +1,18 @@
+
+*, *:before ,*:after {
+    margin:0;
+}
+html {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.flex-center-box {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.forms {
+    margin: 20px;
+}
