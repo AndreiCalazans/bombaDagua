@@ -5,7 +5,7 @@ export const renderField = ({input , label, type , unit,  meta: {touched ,error,
         <label className='control-label'>{label}</label>
         <div > 
             <div className="input-group">
-                <input className='form-control' {...input} placeholder={label} type={type} title={label} />
+                <input required className='form-control' {...input} placeholder={label} type={type} title={label} />
                 <span className="input-group-addon">{unit}</span>
             </div>
             {touched && 

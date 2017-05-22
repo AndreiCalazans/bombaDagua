@@ -10,6 +10,8 @@ var Hd;
 var Hl;
 var Vel;
 var g = 9.8196;
+import React from 'react';
+import {Redirect } from 'react-router-dom';
 
 import moody from './moody';
 
@@ -112,6 +114,7 @@ export default function calculatePump( q , AS , AR , L , Mat , Fluid , Equips , 
         total_pressure: pressaoHM( altura_total , PerdaTotal , Vel),
         vazao: q
     };
+
 
     return response;
 }

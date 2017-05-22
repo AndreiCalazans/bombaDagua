@@ -4,13 +4,13 @@ import * as actions from '../actions';
 import calcPump from '../utils/pumpCalc';
 import {Field , reduxForm } from 'redux-form';
 import {renderField} from './renderField';
-
-
+import {Redirect } from 'react-router-dom';
+import history from '../history';
 const singularidades = [
     {name: 'Alargamento gradual', Ks: 0.30},
     {name: 'Bocais', Ks: 2.75},
     {name: 'Cotovelo 90', Ks: 0.90},
-    {name: 'Cotovelo 45', Ks: 0.90},
+    {name: 'Cotovelo 45', Ks: 0.40},
     {name: 'Crivo', Ks: 0.75},
     {name: 'Curva 90', Ks: 0.40},
     {name: 'Curva 45', Ks: 0.20},
@@ -90,6 +90,10 @@ const valueControlHl = {
 
 const validate = values => {
     const errors = {};
+     const names = ['vazao', 'AS', 'AR', 'L', 'D', 'fluid', 'material'];
+    names.forEach((e) => {
+        if(!values[e]) { errors[e] = 'Por favor preencha!'}
+    })
 
     
 
@@ -106,7 +110,6 @@ class Home extends React.Component {
     }
 
     handleChangeOnHl(e) {
-        console.log(valueControlHl[e.target.name]);
         valueControlHl[e.target.name].val = Number(e.target.value) * Number(e.target.dataset.ks);
         var totalValue = 0;
         for( var name in valueControlHl) {
@@ -119,27 +122,21 @@ class Home extends React.Component {
     }
 
 
+
     submit(values) {
-        console.log(values);
-        console.log(this.state.Hl);
-        console.log(calcPump(Number(values.vazao) , Number(values.AS), Number(values.AR) , Number(values.L) , 'pvc' ,'water', 0.8 , Number(values.D)));
-    console.log('my test ', calcPump(0.0001389 , 4 , 10 , 15 , 'pvc' ,'water' , this.state.Hl , 0.04));
-    
+        // console.log(values);
+        // console.log(this.state.Hl);
+        // console.log(calcPump(Number(values.vazao) , Number(values.AS), Number(values.AR) , Number(values.L) , values.material , values.fluid , 0.8 , MMtoM(Number(values.D)) ));
+        let results = calcPump(Number(values.vazao) , Number(values.AS), Number(values.AR) , Number(values.L) , values.material , values.fluid , 0.8 , MMtoM(Number(values.D)));
+        this.props.setResults(results);     
+    // console.log('my test ', calcPump(0.0001389 , 4 , 10 , 15 , 'pvc' ,'water' , this.state.Hl , 0.04));
+        // history.push('/#results');
+        this.modalToggle();
 }
-     /*renderTrTd(name , Ks){
-
+    modalToggle(e) {
+        this.refs.modal.classList.toggle('hide');
+    }
     
-    return (
-        <tr>
-            <td >
-              <Field  name='p' type='number' min={0} component='input'/>
-            </td>
-            <td className='text-center'>{name}</td>
-            <td>{Ks}</td>
-        </tr>
-    )
-}*/
-
     render() {
     // console.log(calcPump(0.0001389 , 4 , 10 , 15 , 'pvc' ,'water' , 0.8 , 0.04));
     const {handleSubmit} = this.props;
@@ -199,8 +196,9 @@ class Home extends React.Component {
                 <div className="form-group">
                  <label className='col-sm-2 control-label'>Tipo de Fluido</label>
                  <div className="col-sm-10 input-group" style={{padding: '0 15px'}}>
-                    <Field name='fluid' component='select' className='form-control input-group' >
-                        <option value="water">agua</option>
+                    <Field required value='water' name='fluid' component='select' className='form-control input-group' >
+                        <option value=""></option>
+                        <option defaultValue value="water">agua</option>
                         <option value="water">Oil</option>
                     </Field>
                  </div>
@@ -208,8 +206,9 @@ class Home extends React.Component {
                  <div className="form-group">
                  <label className='col-sm-2 control-label'>Tipo de tubulação</label>
                  <div className="col-sm-10 input-group" style={{padding: '0 15px'}}>
-                    <Field name='material' component='select' className='form-control input-group' >
-                        <option value="pvc">PVC</option>
+                    <Field required name='material' component='select' className='form-control input-group' >
+                        <option value=""></option>                        
+                        <option defaultValue value="pvc">PVC</option>
                         <option value="Metal">Metal</option>
                     </Field>
                  </div>
@@ -222,8 +221,29 @@ class Home extends React.Component {
                 </div>
             </form>
 
+            <div ref='modal' className="hide results flex-center-box">
+                    <div className="bg-success results_sub_box">
+                        <p onClick={this.modalToggle.bind(this)} className='close_btn'><i className="fa fa-times" aria-hidden="true"></i></p>
+                        <p className="bg-success">NPSH disponivel: {this.props.results.npsh}</p>
+                        <p className="bg-success">Pressão: {this.props.results.total_pressure}</p>
+                        <p className="bg-success">Vazão: {this.props.results.vazao}</p>
+                        
+                    </div>
+            </div>
+
         </div>
         )
+    }
+}
+
+
+function MMtoM(mm) {
+    return mm/1000;
+}
+
+function mapStateToProps(state) {
+    return {
+        results: state.results
     }
 }
 
@@ -231,7 +251,7 @@ class Home extends React.Component {
 Home = reduxForm({
     form: 'pump',
     validate
-})(connect()(Home));
+})(connect(mapStateToProps , actions )(Home));
 
 
 export default Home;
