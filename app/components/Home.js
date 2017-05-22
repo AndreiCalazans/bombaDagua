@@ -7,9 +7,9 @@ import {renderField} from './renderField';
 
 
 const singularidades = [
-    {name: 'Alargamento gradual ', Ks: 0.30},
-    {name: 'Bocais ', Ks: 2.75},
-    {name: 'Cotovelo 90 ', Ks: 0.90},
+    {name: 'Alargamento gradual', Ks: 0.30},
+    {name: 'Bocais', Ks: 2.75},
+    {name: 'Cotovelo 90', Ks: 0.90},
     {name: 'Cotovelo 45', Ks: 0.90},
     {name: 'Crivo', Ks: 0.75},
     {name: 'Curva 90', Ks: 0.40},
@@ -28,6 +28,66 @@ const singularidades = [
     {name: 'Vávula de pé', Ks: 1.75},
 ];
 
+const valueControlHl = {
+    'Alargamento gradual': {
+         val:0
+     },
+    'Bocais': {
+        val:0
+    },
+    'Cotovelo 90':{
+        val:0
+    },
+    'Cotovelo 45': {
+        val:0
+    },
+    'Crivo': {
+        val:0
+    },
+    'Curva 90':{
+        val:0
+    },
+    'Curva 45': {
+        val: 0
+    },
+    'Entrada Normal':{
+        val:0
+    },
+    'Entrada de Borda': {
+        val:0
+    },
+    'Junção': {
+        val:0
+    },
+    'Redução gradual': {
+        val:0
+    },
+    'Tê passagem direta': {
+        val:0
+    },
+    'Tê saída de lado': {
+        val:0
+    },
+    'Tê saída bilateral': {
+        val:0
+    },
+    'Vávula gaveta': {
+        val:0
+    },
+    'Vávula borboleta': {
+        val:0
+    },
+    'Vávula de retenção': {
+        val:0
+    },
+    'Vávula globo':{ 
+        val:0
+    },
+    'Vávula de pé': {
+        val:0
+    }
+};
+
 const validate = values => {
     const errors = {};
 
@@ -40,14 +100,30 @@ const validate = values => {
 class Home extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            Hl: 0
+        };
     }
 
+    handleChangeOnHl(e) {
+        console.log(valueControlHl[e.target.name]);
+        valueControlHl[e.target.name].val = Number(e.target.value) * Number(e.target.dataset.ks);
+        var totalValue = 0;
+        for( var name in valueControlHl) {
+            totalValue += valueControlHl[name].val
+        }
+
+        this.setState({
+            Hl: totalValue
+        })
+    }
 
 
     submit(values) {
         console.log(values);
+        console.log(this.state.Hl);
         console.log(calcPump(Number(values.vazao) , Number(values.AS), Number(values.AR) , Number(values.L) , 'pvc' ,'water', 0.8 , Number(values.D)));
-    console.log('my test ', calcPump(0.0001389 , 4 , 10 , 15 , 'pvc' ,'water' , 0.8 , 0.04));
+    console.log('my test ', calcPump(0.0001389 , 4 , 10 , 15 , 'pvc' ,'water' , this.state.Hl , 0.04));
     
 }
      /*renderTrTd(name , Ks){
@@ -95,13 +171,22 @@ class Home extends React.Component {
                               return (
                                   <tr key={index}>
                                     <td >
-                                        <Field  name='p' type='number' min={0} component='input'/>
+                                        <input onChange={this.handleChangeOnHl.bind(this)} data-ks={e.Ks} className='Hl' type='number' name={e.name} min={0} />
+                                        {/*<Field  name={e.Ks} type='number' min={0} component='input'/>*/}
                                     </td>
                                     <td className='text-center'>{e.name}</td>
                                     <td>{e.Ks}</td>
                                  </tr>
                               )
                           })}
+                          <tr>
+                              <td colSpan='2'>
+                                Total
+                              </td>
+                              <td>
+                                  {this.state.Hl}
+                              </td>
+                          </tr>
                            
                        </tbody>
                    </table>
