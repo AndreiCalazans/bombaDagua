@@ -1,4 +1,6 @@
 
+@import './headerImg';
+
 *, *:before ,*:after {
     margin:0;
 }
@@ -6,7 +8,14 @@ html {
     font-size: 14px;
     line-height: 1.5;
 }
-
+body {
+    background: #2f2f40;
+    color:white;
+}
+.warn_text {
+    font-weight: bold;
+    color: red;
+}
 .flex-center-box {
     display:flex;
     justify-content: center;
@@ -31,10 +40,68 @@ html {
     position: relative;
     padding: 30px;
     width: 260px;
+    background: rgba(0,0,0,0.9);
 }
 .close_btn {
     position:absolute;
     top: 10px;
     right: 10px;
+    cursor: pointer;
 }
 
+.Hl {
+    width: 50px;
+    color:black;
+}
+
+.logo_name {
+    color: orange;
+    font-weight: 900;
+    text-decoration: none;
+}
+.logo_name:hover {
+    text-decoration: none;
+    color:orange;
+}
+.calc_logo_name {
+    font-size: 32px;
+    margin: 15px 0 0 20px;;
+}
+.intro {
+    font-size: 32px;
+    padding: 150px 150px 20px 150px;
+    // text-align: justify;
+    letter-spacing: 2.5px;
+}
+
+.landing {
+    flex-direction: column;
+}
+
+@media (max-width:950px) {
+    .intro {
+        padding: 50px;
+    }
+}
+.hidden-extra-small {
+    display: none;  
+}
+.show-extra-small  {
+    display:inline;
+}
+
+@media only screen and (min-width: 600px ) {
+    .hidden-extra-small {
+        display:inline !important;
+    }
+    .show-extra-small {
+        display: none;
+    }
+}
+
+.footer {
+    position: absolute;
+    bottom: 30px;
+    flex-direction: column;
+    
+}

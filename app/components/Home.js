@@ -6,6 +6,7 @@ import {Field , reduxForm } from 'redux-form';
 import {renderField} from './renderField';
 import {Redirect } from 'react-router-dom';
 import history from '../history';
+import {Link} from 'react-router-dom';
 const singularidades = [
     {name: 'Alargamento gradual', Ks: 0.30},
     {name: 'Bocais', Ks: 2.75},
@@ -18,7 +19,7 @@ const singularidades = [
     {name: 'Entrada de Borda', Ks: 1.00},
     {name: 'Junção', Ks:0.40},
     {name: 'Redução gradual', Ks: 0.15},
-    {name: 'Tê passagem direta ', Ks: 0.60},
+    {name: 'Tê passagem direta', Ks: 0.60},
     {name: 'Tê saída de lado', Ks:1.30},
     {name: 'Tê saída bilateral', Ks:1.80},
     {name: 'Vávula gaveta', Ks: 0.20},
@@ -142,8 +143,9 @@ class Home extends React.Component {
     const {handleSubmit} = this.props;
         return (
         <div>
-            <h1>Home</h1>
-
+            <div>
+                <p style={{marginTop: '20px'}}><Link className="logo_name calc_logo_name" to='/'>BombaCalc</Link></p>
+            </div>
             <form style={{padding: "40px"}} onSubmit={handleSubmit(this.submit.bind(this))} className="form-horizontal col-sm-8 col-sm-offset-2">
                 <Field name='vazao' type='number' unit='m3/s' component={renderField} label='Vazão Requerida' />
                 <Field name='AS' type='number' unit='m' component={renderField} label='Altura de sucção' />
@@ -158,7 +160,7 @@ class Home extends React.Component {
                    <table className=" table table-bordered">
                        <thead>
                            <tr>
-                               <th className="col-xs-2">#</th>
+                               <th className="col-xs-2 text-center">Qtd</th>
                                <th className="col-xs-8 text-center">Peça</th>
                                <th className="col-xs-2 text-center">Ks</th>
                            </tr>
@@ -167,12 +169,13 @@ class Home extends React.Component {
                           {singularidades.map((e, index) => {
                               return (
                                   <tr key={index}>
-                                    <td >
+                                    <td className='text-center' >
+                                        
                                         <input onChange={this.handleChangeOnHl.bind(this)} data-ks={e.Ks} className='Hl' type='number' name={e.name} min={0} />
                                         {/*<Field  name={e.Ks} type='number' min={0} component='input'/>*/}
                                     </td>
                                     <td className='text-center'>{e.name}</td>
-                                    <td>{e.Ks}</td>
+                                    <td className='text-center'>{e.Ks}</td>
                                  </tr>
                               )
                           })}
@@ -181,7 +184,7 @@ class Home extends React.Component {
                                 Total
                               </td>
                               <td>
-                                  {this.state.Hl}
+                                  {Number(this.state.Hl).toFixed(2)}
                               </td>
                           </tr>
                            
@@ -222,11 +225,11 @@ class Home extends React.Component {
             </form>
 
             <div ref='modal' className="hide results flex-center-box">
-                    <div className="bg-success results_sub_box">
+                    <div className="results_sub_box">
                         <p onClick={this.modalToggle.bind(this)} className='close_btn'><i className="fa fa-times" aria-hidden="true"></i></p>
-                        <p className="bg-success">NPSH disponivel: {this.props.results.npsh}</p>
-                        <p className="bg-success">Pressão: {this.props.results.total_pressure}</p>
-                        <p className="bg-success">Vazão: {this.props.results.vazao}</p>
+                        <p>NPSH disponivel: <strong>{Number(this.props.results.npsh).toFixed(2)} m.c.a </strong></p>
+                        <p>Pressão: <strong>{Number(this.props.results.total_pressure).toFixed(2)} m.c.a </strong></p>
+                        <p>Vazão: <strong>{this.props.results.vazao} m3/s </strong></p>
                         
                     </div>
             </div>

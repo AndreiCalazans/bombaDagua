@@ -9,8 +9,8 @@ export const renderField = ({input , label, type , unit,  meta: {touched ,error,
                 <span className="input-group-addon">{unit}</span>
             </div>
             {touched && 
-            ((error && <p className='bg-warning' ><span>{error}</span></p>) || 
-                (warning && <p className='bg-info'><span >{warning}</span></p>)    
+            ((error && <p className='warn_text' ><span>{error}</span></p>) || 
+                (warning && <p className='warn_text'><span >{warning}</span></p>)    
                 )}
         </div>
     </div>
