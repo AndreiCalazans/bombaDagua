@@ -95,6 +95,6 @@ body {
     display: none; } }
 
 .footer {
-  position: absolute;
-  bottom: 30px;
+  position: relative;
+  bottom: -120px;
   flex-direction: column; }
