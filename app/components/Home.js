@@ -16,19 +16,6 @@ const validate = values => {
     names.forEach((e) => {
         if(!values[e]) { errors[e] = 'Por favor preencha!'}
     })
-
-    const numberValues = ['vazao', 'AS', 'AR', 'L', 'D'];
-    // numberValues.forEach((e) => {
-    //     if(values[e]) {
-    //         if(!/^[0-9.]+$/.test(values[e])) {
-    //             errors[e] = 'Por favor preencha com um numero valido e não use virgula';
-    //         }
-    //     }
-    // })
-
-    
-    
-
     return errors;
 }
 
@@ -56,19 +43,29 @@ class Home extends React.Component {
 
 
     submit(values) {
-
-        
-
-        let results = calcPump(Number(removeCommaForDot(values.vazao)) , Number(removeCommaForDot(values.AS)), Number(removeCommaForDot(values.AR)) , Number(removeCommaForDot(values.L)) , values.material , values.fluid , 0.8 , MMtoM(Number(removeCommaForDot(values.D)) ));
+        let results = calcPump(
+            Number(removeCommaForDot(values.vazao)), 
+            Number(removeCommaForDot(values.AS)),
+            Number(removeCommaForDot(values.AR)), 
+            Number(removeCommaForDot(values.L)),
+            Number(removeCommaForDot(values.Visc)/1000),
+            Number(removeCommaForDot(values.Patm)),
+            Number(removeCommaForDot(values.Pv)),
+            Number(removeCommaForDot(values.Densidade)),
+            values.material, 
+            this.state.Hl, 
+            MMtoM(Number(removeCommaForDot(values.D)))
+            );
         this.props.setResults(results);     
-        this.modalToggle();
+        this.modalToggle('result');
 }
-    modalToggle(e) {
-        this.refs.modal.classList.toggle('hide');
+    modalToggle( which) {
+        let name = 'modal_'+which;
+
+        this.refs[name].classList.toggle('hide');
     }
     
     render() {
-    // console.log(calcPump(0.0001389 , 4 , 10 , 15 , 'pvc' ,'water' , 0.8 , 0.04));
     const {handleSubmit} = this.props;
         return (
         <div>
@@ -123,23 +120,33 @@ class Home extends React.Component {
                
                 </div>
                 
-                <div className="form-group">
-                 <label className='col-sm-2 control-label'>Tipo de Fluido</label>
-                 <div className="col-sm-10 input-group" style={{padding: '0 15px'}}>
-                    <Field required value='water' name='fluid' component='select' className='form-control input-group' >
-                        <option value=""></option>
-                        <option defaultValue value="water">agua</option>
-                        <option value="water">Oil</option>
-                    </Field>
-                 </div>
-                </div>
+
+                <Field name='Visc'  type='number' unit='cP (centpoise)' component={renderField} label='Viscosidade dinâmica do Fluido' />
+                <p className='link' onClick={() => { this.modalToggle('tabela_visc')}}>Tabela de viscosidade</p>
+                <Field name='Patm'  type='number' unit='Pa' component={renderField} label='Pressão barométrica (Pressão atmosférica)' />
+                <p className='link' onClick={() => { this.modalToggle('tabela_barometrica')}}>Tabela de pressões atmosféricas</p>
+               
+                <Field name='Pv'  type='number' unit='Pa' component={renderField} label='Pressão de Vapor do fluido' />
+                <p className='link' onClick={() => { this.modalToggle('tabela_vapor')}}>Tabela de pressão de vapor</p>
+             
+                <Field name='Densidade'  type='number' unit='kg/m3' component={renderField} label='Densidade do fluido' />
+                <p className='link' onClick={() => { this.modalToggle('tabela_densidade')}}>Tabela de pressão de vapor</p>
+                  
+
+
+
                  <div className="form-group">
                  <label className='col-sm-2 control-label'>Tipo de tubulação</label>
                  <div className="col-sm-10 input-group" style={{padding: '0 15px'}}>
                     <Field required name='material' component='select' className='form-control input-group' >
                         <option value=""></option>                        
                         <option defaultValue value="pvc">PVC</option>
-                        <option value="Metal">Metal</option>
+                        <option value="ferro fundido">Ferro fundido</option>
+                        <option value="ferro galvanizado">Ferro galvanizado</option>
+                        <option value="ferro fundido asfaltado">Ferro fundido asfaltado</option>
+                        <option value="aço comercial">Aço comercial</option>
+                        <option value="concreto">Concreto</option>
+                        <option value="madeira">Madeira</option>
                     </Field>
                  </div>
                 </div>
@@ -151,13 +158,129 @@ class Home extends React.Component {
                 </div>
             </form>
 
-            <div ref='modal' className="hide results flex-center-box">
+            <div ref='modal_result' className="hide results flex-center-box">
                     <div className="results_sub_box">
-                        <p onClick={this.modalToggle.bind(this)} className='close_btn'><i className="fa fa-times" aria-hidden="true"></i></p>
+                        <p onClick={() => { this.modalToggle('result')}} className='close_btn'><i className="fa fa-times" aria-hidden="true"></i></p>
                         <p>NPSH disponivel: <strong>{Number(this.props.results.npsh).toFixed(2)} m.c.a </strong></p>
                         <p>Pressão: <strong>{Number(this.props.results.total_pressure).toFixed(2)} m.c.a </strong></p>
                         <p>Vazão: <strong>{this.props.results.vazao} m3/s </strong></p>
                         
+                    </div>
+            </div>
+
+            <div ref='modal_tabela_visc' className="hide results flex-center-box">
+                    <div className="results_sub_box">
+                        <p onClick={() => { this.modalToggle('tabela_visc')}} className='close_btn'><i className="fa fa-times" aria-hidden="true"></i></p>
+                      <table className="table table-bordered">
+                          <thead>
+                              <tr>
+                                  <td className="col-xs-6">Liquido (a 20C)</td>
+                                  <td className="col-xs-6">Viscosidade dinâmica (cP)</td>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr>
+                                  <td>água</td>
+                                  <td>1</td>
+                              </tr>
+                
+                          </tbody>
+                      </table>
+                    </div>
+            </div>
+
+            <div ref='modal_tabela_vapor' className="hide results flex-center-box">
+                    <div className="results_sub_box">
+                        <p onClick={() => { this.modalToggle('tabela_vapor')}} className='close_btn'><i className="fa fa-times" aria-hidden="true"></i></p>
+                      <table className="table table-bordered">
+                          <thead>
+                              <tr>
+                                  <td className="col-xs-6">temperatura(C)</td>
+                                  <td className="col-xs-6">Pressão de vapor Pa</td>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr>
+                                  <td>10</td>
+                                  <td>1600</td>
+                              </tr>
+                              <tr>
+                                  <td>20</td>
+                                  <td>2300</td>
+                              </tr>
+                              <tr>
+                                  <td>30</td>
+                                  <td>4200</td>
+                              </tr>
+                              <tr>
+                                  <td>50</td>
+                                  <td>12300</td>
+                              </tr>
+                
+                          </tbody>
+                      </table>
+                    </div>
+            </div>
+             <div ref='modal_tabela_densidade' className="hide results flex-center-box">
+                    <div className="results_sub_box">
+                        <p onClick={() => { this.modalToggle('tabela_densidade')}} className='close_btn'><i className="fa fa-times" aria-hidden="true"></i></p>
+                      <table className="table table-bordered">
+                          <thead>
+                              <tr>
+                                  <td className="col-xs-6">Líquido</td>
+                                  <td className="col-xs-6">Kg/m3</td>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr>
+                                  <td>Óleo</td>
+                                  <td>790</td>
+                              </tr>
+                              <tr>
+                                  <td>Água</td>
+                                  <td>1000</td>
+                              </tr>
+                              <tr>
+                                  <td>Gasolina</td>
+                                  <td>680</td>
+                              </tr>
+                          </tbody>
+                      </table>
+                    </div>
+            </div>
+             <div ref='modal_tabela_barometrica' className="hide results flex-center-box">
+                    <div className="results_sub_box">
+                        <p onClick={() => { this.modalToggle('tabela_barometrica')}} className='close_btn'><i className="fa fa-times" aria-hidden="true"></i></p>
+                      <table className="table table-bordered">
+                          <thead>
+                              <tr>
+                                  <td className="col-xs-6">Altitude(Km)</td>
+                                  <td className="col-xs-6">Pa</td>
+                              </tr>
+                          </thead>
+                          <tbody>
+                              <tr>
+                                  <td>0</td>
+                                  <td>103375</td>
+                              </tr>
+                              <tr>
+                                  <td>1</td>
+                                  <td>81600</td>
+                              </tr>
+                              <tr>
+                                  <td>2</td>
+                                  <td>65280</td>
+                              </tr>
+                              <tr>
+                                  <td>4</td>
+                                  <td>40800</td>
+                              </tr>
+                              <tr>
+                                  <td>6</td>
+                                  <td>23120</td>
+                              </tr>
+                          </tbody>
+                      </table>
                     </div>
             </div>
 
