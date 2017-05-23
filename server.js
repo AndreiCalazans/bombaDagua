@@ -30,7 +30,7 @@ app.get('*', function (req, res) {
 });
 
 
-app.listen(PORT, function(){
+app.listen(PORT, '0.0.0.0' , function(){
   console.log('server is up on port ' + PORT);
 });
 
