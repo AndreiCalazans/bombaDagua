@@ -15,20 +15,6 @@ import {Redirect } from 'react-router-dom';
 
 import moody from './moody';
 
-
-var fluids = {
-    water: {
-        name: 'water',
-        density: 1000, 
-        dynamic_viscosity: 0.001,
-        vapor_pressure: 2300  
-
-    }
-
-}
-;
-
-
 var materials = {
   pvc: {
     rugosidade: 0.005
@@ -54,9 +40,6 @@ var materials = {
 };
 
 
-
-
-
 ///helpers 
 
 function toPesoEspecifico( density ) {
@@ -73,16 +56,6 @@ function Reynolds( d , v , density , viscosityDynamic) {
   return ((d * v * density )/ viscosityDynamic);
 }
 
-//Reynolds( 0.04 , 0.11053310 , 1000 , 0.001);
-
-function frictionFactor(Re , eD) {
-  if (Re < 2300) {
-    return (64/Re);
-  } else {
-    return false;
-  }
-}
-
 function relative_e( e , d) {
     return e/d;
 }
@@ -97,19 +70,14 @@ function perdasDistribuidas(F , comprimento , D , v) {
 }
 
 
-
 function NPSHd(patm , pv , pesoEsp , AS , Ht) {
   return ((patm/pesoEsp) - (pv / pesoEsp ) - AS - Ht);
 }
-
-//NPSHd(101375 , 2300 ,9810 , 4, 0.084);
 
 function pressaoHM(H , Ht ,  v) {
   return (H - Ht - (Math.pow(v , 2)/(2 * g)));
 }
 
-//pressaoHM( 14 , 0.084 , 0.11);
-///////////////////////
 
 export default function calculatePump( q , AS , AR , L , Visc , Patm , Pv , Densidade, Mat , Equips ,  D ) {
     // this should return an object with the NPSHd , Preasure and Flow(q)
@@ -131,7 +99,5 @@ export default function calculatePump( q , AS , AR , L , Visc , Patm , Pv , Dens
         total_pressure: pressaoHM( altura_total , PerdaTotal , Vel),
         vazao: q
     };
-
-
     return response;
 }

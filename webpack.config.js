@@ -46,12 +46,12 @@ module.exports = {
   },
   plugins: [
     extractPlugin,
-    //  new webpack.DefinePlugin({ // <-- key to reducing React's size
-    //   'process.env': {
-    //     'NODE_ENV': JSON.stringify('production')
-    //   }
-    // }),
-    // new webpack.optimize.UglifyJsPlugin(), //minify everything
+     new webpack.DefinePlugin({ // <-- key to reducing React's size
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production')
+      }
+    }),
+    new webpack.optimize.UglifyJsPlugin(), //minify everything
     new webpack.optimize.AggressiveMergingPlugin(),//Merge chunks 
      new CompressionPlugin({ 
       asset: "[path].gz[query]",
@@ -61,6 +61,6 @@ module.exports = {
       minRatio: 0.8
     })
 
-  ],
-devtool: 'cheap-module-eval-source-map'
+  ]
+// devtool: 'cheap-module-eval-source-map'
 }

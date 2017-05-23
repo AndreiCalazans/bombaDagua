@@ -77,7 +77,7 @@ class Home extends React.Component {
                 <Field name='AS' type='number' unit='m' component={renderField} label='Altura de sucção' />
                 <Field name='AR' type='number' unit='m' component={renderField} label='Altura de recalque' />
                 <Field name='L' type='number'  unit='m' component={renderField} label='Comprimento total' />
-                <Field name='D'  type='number' unit='mm' component={renderField} label='Diametro da tubulação' />
+                <Field name='D'  type='number' unit='mm' component={renderField} label='Diâmetro da tubulação' />
                 <div>
                     <label htmlFor="" className="col-sm-12 control-label"> Peças do Conduto <i className="fa fa-chevron-down" aria-hidden="true"></i>
  </label>
